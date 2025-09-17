@@ -27,6 +27,7 @@ class Contrato(models.Model):
     data_fim = models.DateField(blank=True, null=True)
     valor_mensal = models.DecimalField(max_digits=10, decimal_places=2)
     arquivo_pdf = models.FileField(upload_to='contratos/', blank=True, null=True)
+    status = models.CharField(max_length=20, choices=[('ativo', 'Ativo'), ('inativo', 'Inativo')], default='ativo')
 
     def __str__(self):
         return f"Contrato: {self.cliente.nome} - {self.imovel.endereco}"
