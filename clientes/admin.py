@@ -3,15 +3,16 @@ from .models import Cliente, Imovel, Contrato
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'email', 'telefone', 'cnpj')
+    list_display = ('nome', 'email', 'telefone')
     search_fields = ('nome', 'email', 'cnpj')
-    list_filter = ('nome', 'cnpj')
+    list_filter = ('nome', 'email')
 
 @admin.register(Imovel)
 class ImovelAdmin(admin.ModelAdmin):
     list_display = ('endereco', 'bairro', 'cidade', 'valor_aluguel', 'disponivel')
-    search_fields = ('endereco', 'bairro', 'cidade')
-    list_filter = ('disponivel', 'cidade', 'bairro')
+    search_fields = ('endereco', 'bairro', 'cidade', 'valor_aluguel')
+    list_filter = ('disponivel', 'cidade', 'bairro', 'valor_aluguel')
+    ordering = ('cidade', 'valor_aluguel')
 
 @admin.register(Contrato)
 class ContratoAdmin(admin.ModelAdmin):
@@ -25,16 +26,16 @@ class ValorAluguelFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return [
-            ('<1000', 'Menor que 1000'),
-            ('1000-3000', 'Entre 1000 e 3000'),
-            ('>3000', 'Maior que 3000'),
+            ("baixo", "Até R$ 1000"),
+            ("medio", "De R$ 1000 a R$ 3000"),
+            ("alto", "Acima de R$ 3000"),
         ]
 
     def queryset(self, request, queryset):
-        if self.value() == '<1000':
+        if self.value() == 'baixo':
             return queryset.filter(valor_aluguel__lt=1000)
-        if self.value() == '1000-3000':
+        if self.value() == 'medio':
             return queryset.filter(valor_aluguel__gte=1000, valor_aluguel__lte=3000)
-        if self.value() == '>3000':
+        if self.value() == 'alto':
             return queryset.filter(valor_aluguel__gt=3000)
         return queryset
